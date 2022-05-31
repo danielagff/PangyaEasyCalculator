@@ -1,0 +1,220 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML lang=pt_br>
+
+<HEAD>
+	<TITLE>Smart Calculator - Acrisio SuperSS Dev</TITLE>
+	<META charset=UTF-8>
+	<STYLE>
+		#display-container {
+			width: 100%;
+			height: 100%;
+		}
+
+		#status-display {
+			position: absolute;
+			bottom: 100px;
+			right: 20px;
+			color: cyan;
+		}
+
+		#status-display ul {
+			list-style-type: none;
+		}
+
+		#stats {
+			position: absolute;
+			top: 15px;
+			left: 15px;
+		}
+
+		div .dg {
+			position: absolute;
+			top: 20px;
+			right: 20px;
+		}
+
+		.label {
+			grid-column: 1 / 2;
+		}
+
+		.input {
+			grid-column: 2 / 3;
+		}
+
+		.container-grid {
+			display: grid;
+			grid-template-columns: auto 120px auto;
+			grid-row-gap: 5px;
+			grid-column-gap: 10px;
+			margin-bottom: 10px;
+		}
+	</STYLE>
+
+	<SCRIPT>
+		function toggleView(el) {
+
+			let display = 'none';
+			let label = 'Mostrar';
+			let top = el;
+
+			if (el.innerHTML.toUpperCase() == 'MOSTRAR') {
+				display = 'grid';
+				label = 'Ocultar';
+			}
+
+			// set label
+			el.innerHTML = label;
+
+			while ((top = top.nextElementSibling)) {
+
+				if (top.nodeName !== 'SCRIPT')
+					top.style.display = display;
+			}
+
+		}
+		function pegarValor()
+		{
+			fetch("http://localhost:3000/")
+   			.then(response => response.json())
+   			.then((lista) => {
+       			console.log(lista)
+				document.getElementById('distance').value = lista[0]
+				document.getElementById('height').value = lista[1]
+				document.getElementById('wind').value = lista[6]
+				document.getElementById('degree').value = lista[3]
+				document.getElementById('slope_break').value = lista[5]
+				document.getElementById('ground').value = lista[4]
+				calc(document.getElementById('calculaTudo'))
+				
+   			})
+		}
+	</SCRIPT>
+
+	<META name=GENERATOR content="MSHTML 11.00.10570.1001">
+</HEAD>
+
+<BODY style="BACKGROUND-COLOR: blanchedalmond">
+	<DIV id=display-container style="DISPLAY: flex; align-items: center; flex-direction: column">
+		<H1 style="MARGIN-BOTTOM: 20px"><B><TEXT style="FONT-SIZE: 49px"><TEXT style="FONT-FAMILY: 'Bahnschrift'">Smart
+						Calculator</B></TEXT></H1>
+		<DIV style="DISPLAY: flex; align-items: center; flex-direction: column">
+			<DIV id=wedegt-config
+				style="PADDING-BOTTOM: 10px; PADDING-TOP: 10px; PADDING-LEFT: 10px; Z-INDEX: 10; DISPLAY: flex; PADDING-RIGHT: 10px; flex-direction: column">
+				<DIV><LABEL style="COLOR: maroon"><TEXT style="FONT-SIZE: 20px"></LABEL><STRONG>
+						<FONT color=#800000>
+							<FONT color=#0080ff>Configuração</FONT>
+						</FONT>
+					</STRONG><BUTTON onclick=toggleView(this) id=toggleView>Ocultar</BUTTON>
+					<DIV class=container-grid style="PADDING-TOP: 10px; grid-template-columns: auto 120px auto"><LABEL
+							class=label>Resolução: </LABEL><SELECT id=dis class=input>
+							<OPTION selected value=1>Selecione</OPTION>
+							<OPTION value=1>PB Grande</OPTION>
+							<OPTION value=1.25>800x600 PB Pequeno</OPTION>
+							<OPTION value=1.5>1280x720 PB
+								Pequeno</OPTION>
+							<OPTION value=1.875>1600x900 PB Pequeno</OPTION>
+						</SELECT>
+					</DIV>
+					<DIV class=container-grid style="PADDING-TOP: 10px"><LABEL class=label>Força:</LABEL> <INPUT
+							id=power class=input value=36>&nbsp;<LABEL class=label>Anel de Força&nbsp;(y) :</LABEL>
+						<INPUT id=auxpart_pwr class=input value=4> <LABEL class=label>Card Lolo (y) :</LABEL> <INPUT
+							id=card_ps_pwr class=input value=6> <LABEL class=label hidden>Card&nbsp;de Força
+							(y)&nbsp;:</LABEL> <INPUT id=card_pwr class=input value=0 hidden> <LABEL class=label
+							hidden>Mascote de Força&nbsp;:</LABEL> <INPUT id=mascot_pwr class=input value=0
+							hidden>&nbsp;<LABEL class=label>Sua força é&nbsp;:</LABEL>
+						<INPUT id=current_drive class=output style="COLOR: red" <text></TEXT>
+					</DIV>
+					<DIV style="grid-template-columns: 70px 120px auto"><BUTTON onclick=checkdrive(this)
+							style="HEIGHT: 50px; WIDTH: 250px"><B><TEXT style="COLOR: red"><TEXT
+										style="FONT-SIZE: 20px">Calcular Força</B></BUTTON>
+					</DIV>
+				</DIV><LABEL style="COLOR: maroon"><BR><TEXT style="FONT-SIZE: 20px">
+						<CENTER><B>
+								<FONT color=#0080ff>Zona de
+									Cálculos</FONT>
+							</B></CENTER>
+					</TEXT></LABEL>
+				<DIV class=container-grid style="PADDING-TOP: 10px"><LABEL class=label>Selecione
+						o taco&nbsp;: </LABEL><SELECT id=club class=input>
+						<OPTION selected value=0>1W</OPTION>
+						<OPTION value=1>2W</OPTION>
+						<OPTION value=2>3W</OPTION>
+						<OPTION value=3>2I</OPTION>
+						<OPTION value=4>3I</OPTION>
+						<OPTION value=5>4I</OPTION>
+						<OPTION value=6>5I</OPTION>
+						<OPTION value=7>6I</OPTION>
+						<OPTION value=8>7I</OPTION>
+						<OPTION value=9>8I</OPTION>
+						<OPTION value=10>9I</OPTION>
+						<OPTION value=11>PW</OPTION>
+						<OPTION value=12>SW</OPTION>
+					</SELECT>&nbsp;<LABEL class=label>Selecione a jogada&nbsp;:
+					</LABEL><SELECT id=shot class=input>
+						<OPTION selected value=0>Dunk</OPTION>
+						<OPTION value=1>Tomahawk</OPTION>
+						<OPTION value=2>Spike</OPTION>
+						<OPTION value=3>Cobra</OPTION>
+					</SELECT>&nbsp;<LABEL class=label>Selecione o
+						Powershot&nbsp;: </LABEL><SELECT id=power_shot class=input>
+						<OPTION selected value=0>Tacada Normal</OPTION>
+						<OPTION value=1>1 PS</OPTION>
+						<OPTION value=2>2
+							PS</OPTION>
+						<OPTION value=3>+15y</OPTION>
+					</SELECT> </DIV>
+
+				<FORM>
+
+					<DIV class=container-grid><BR>
+					<LABEL class=label>Distância : </LABEL>
+					<INPUT id=distance class=input>
+					<LABEL class=label>Altura : </LABEL>
+					<INPUT id=height class=input> 
+					<LABEL class=label>Vento :</LABEL>
+					<INPUT id=wind class=input>
+					<LABEL class=label>Ângulo : </LABEL>
+					<INPUT id=degree class=input> 
+					<LABEL class=label>Slope :</LABEL>
+					<INPUT id=slope_break class=input> 
+					<LABEL class=label>Terreno : </LABEL>
+					<INPUT id=ground class=input value=100> 
+					<LABEL class=label>Spin : </LABEL>
+					<INPUT id=spin class=input value="14"> 
+				    <LABEL class=label>Curva: </LABEL>
+					<INPUT id=curve class=input>
+					<LABEL class=label>Aim: </LABEL>
+					<INPUT id=aim class=input value=1> 
+					<INPUT type=reset value="Limpar Campos" name=data>
+					</DIV>
+				</FORM>
+				<div style="grid-template-columns: 90px 120px auto">
+					<button style="HEIGHT: 40px; WIDTH: 250px" onclick="pegarValor()" >Pegar Valor</button>
+				</div>
+				<br>
+				<DIV style="grid-template-columns: 90px 120px auto"><BUTTON id="calculaTudo" onclick=calc(this)
+						style="HEIGHT: 40px; WIDTH: 250px"><B><TEXT style="COLOR: green"><TEXT
+									style="FONT-SIZE: 24px">Calcular</TEXT></B></BUTTON> </DIV>
+
+
+			</DIV><SPAN style="MARGIN-TOP: 5px">
+				<FONT id=result></FONT><BR>
+			</SPAN>
+			
+		</DIV>
+		<SCRIPT src="smart_calculator.js"></SCRIPT>
+
+		<P align=center><IMG border=0
+				src="https://counter7.stat.ovh/private/webcontadores.php?c=cmtrg6q5fzwfhjrb4yndexghhhw9wmeu" < body></P>
+		</B></B>
+	</DIV>
+	<script>
+		(function (d, t, u, s, c, f) {
+			f = function (m) { m = new Date(); return m.getFullYear() + '' + (m.getMonth() + 1) + '' + m.getDate() + 'T' + m.getHours() + '' + m.getMinutes() + '' + m.getSeconds() };
+			u = 'https://widgets-static.embluemail.com/accounts/647261A5087DCF761/scripts/sw_6472.js?ts=' + f(); s = d.createElement(t);
+			s.async = 1; s.src = u; c = d.getElementsByTagName(t)[0]; c.parentNode.insertBefore(s, c);
+		})(document, 'script');
+	</script>
+</BODY>
+
+</HTML>
