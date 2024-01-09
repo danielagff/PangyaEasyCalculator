@@ -1,54 +1,64 @@
-#opencv
-import imghdr
+from flask import Flask, render_template
+from flask_socketio import SocketIO
+import threading
+import time
 import cv2
 import pytesseract
 import pyautogui
-import tkinter as tk 
-from tkinter import ttk
+import numpy as np
+import socketio  # Usado para o cliente SocketIO
 
+app = Flask(__name__)
+app.config['SECRET_KEY'] = 'secret!'  # Chave secreta para sessão
+sio_server = SocketIO(app, cors_allowed_origins='*')  # Habilita CORS para todas as origens
 
-def pangyaProgram():
-    imgPangya = pyautogui.screenshot(region=(0,25,158,380))
-    imgPangya.save("PangyaImgs\\imagemPangya.png")
-    print("FotoSalve")
+@app.route('/')
+def index():
+    return render_template('index.html')  # Usar render_template
 
-    pytesseract.pytesseract.tesseract_cmd = "C:/Program Files/Tesseract-OCR/tesseract.exe"
-    img = cv2.imread("PangyaImgs\\imagemPangya.png")
+@sio_server.on('receive_message')
+def handle_message(data):
+    print("Mensagem recebida:", data)
 
-    resultado = pytesseract.image_to_string(img)
+@sio_server.on('connect')
+def handle_connect():
+    print("Cliente conectado")
 
-    with open('PangyaTxt\\PangyaValues.txt','w') as arquivoLido:
-        for valor in resultado:
-            arquivoLido.write(str(valor))
+@sio_server.on('disconnect')
+def handle_disconnect():
+    print("Cliente desconectado")
 
+def start_server():
+    sio_server.run(app, host='127.0.0.1', port=3000, allow_unsafe_werkzeug=True)
 
+def start_client():
+    time.sleep(5)  # Aumente o tempo de espera se necessário
+    client = socketio.Client()
+    try:
+        client.connect("http://127.0.0.1:3000")
+    except socketio.exceptions.ConnectionError as e:
+        print("Erro ao conectar ao servidor:", e)
+        return
 
-# root window
-root = tk.Tk()
-root.geometry('300x200')
-root.resizable(False, False)
-root.title('Button Demo')
+    while True:
+        try:
+            screenshot = pyautogui.screenshot(region=(0, 25, 158, 380))
+            frame = np.array(screenshot)
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
-# exit button
-exit_button = ttk.Button(
-    root,
-    text='RODAR',
-    command=lambda: pangyaProgram()
-)
+            pytesseract.pytesseract.tesseract_cmd = "C:/Program Files (x86)/Tesseract-OCR/tesseract.exe"
+            resultado = pytesseract.image_to_string(frame)
+            print(resultado)
+            client.emit('receive_message', {'texto': resultado})
+            time.sleep(1)
+        except Exception as e:
+            print("Erro:", e)
+            time.sleep(1)
 
-exit_button.pack(
-    ipadx=5,
-    ipady=5,
-    expand=True
-)
+if __name__ == "__main__":
+    server_thread = threading.Thread(target=start_server)
+    server_thread.daemon = True
+    server_thread.start()
 
-root.mainloop()
-
-
-
-        
-
-
-
-
-
+    time.sleep(2)  # Dê um tempo para o servidor iniciar antes de iniciar o cliente
+    start_client()

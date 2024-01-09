@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WebSocket Test</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            var socket = io.connect('http://127.0.0.1:3000');
+
+            socket.on('connect', function() {
+                console.log('Conectado ao servidor WebSocket');
+            });
+
+            socket.on('receive_message', function(data) {
+                document.getElementById('messages').textContent = data.texto;
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>Resultado da Captura de Tela</h1>
+    <div id="messages">Aguardando dados...</div>
+</body>
+</html>
